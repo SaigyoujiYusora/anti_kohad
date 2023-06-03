@@ -35,6 +35,8 @@ async def anti_kohad(bot, ev: CQEvent):
     pandora_img = random.choice(os.listdir(pandoraimgpath))
     eight_em_img = "8em.jpg"
 
+    ranum = random.random()
+
     if '39music' in ev.message.extract_plain_text():
         pass
     elif '弱虫' in ev.message.extract_plain_text():
@@ -67,6 +69,7 @@ async def anti_kohad(bot, ev: CQEvent):
         except Exception as e:
             hoshino.logger.error(f'读取KohaD弔图时发生错误{type(e)}')
         await bot.send(ev, sentimg)
+    hoshino.logger.info(f'anti_kohad随机数为{ranum}')
 
 
 
