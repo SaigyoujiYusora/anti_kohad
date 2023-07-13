@@ -1,4 +1,5 @@
 import os
+import itertools
 import random
 import hoshino
 from hoshino import Service, priv, R
@@ -72,4 +73,25 @@ async def anti_kohad(bot, ev: CQEvent):
     hoshino.logger.info(f'anti_kohad随机数为{ranum}')
 
 
+# playMaiMai= '''
+# 打舞萌打的 玩舞萌dx玩的 打mai打的 打舞萌dx打的
+# '''.split()
+playMaiMai = list(map(''.join, itertools.product(
+    ('', '鉴定为'),
+    ('打', '玩'),
+    ('舞萌', 'mai'),
+    ('', 'mai'),
+    ('', 'dx'),
+    ('玩的', '打的'),
+)))
 
+
+@sv.on_keyword(*playMaiMai)
+async def play_maimai(bot, ev: CQEvent):
+    imgpath = os.path.join(os.path.expanduser(RES_DIR), 'img', 'kohad', 'maimai')
+    playMaiMaipic = random.choice(os.listdir(imgpath))
+    try:
+        playMaiMaipic = R.img(f'kohad/maimai/{playMaiMaipic}').cqcode
+    except Exception as e:
+        hoshino.logger.error(f'读取打舞萌梗图时发生错误{type(e)}')
+    await bot.send(ev, playMaiMaipic)
