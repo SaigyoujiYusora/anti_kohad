@@ -95,3 +95,25 @@ async def play_maimai(bot, ev: CQEvent):
     except Exception as e:
         hoshino.logger.error(f'读取打舞萌梗图时发生错误{type(e)}')
     await bot.send(ev, playMaiMaipic)
+
+
+yuyuzheng = list(map(''.join, itertools.product(
+    ('我有', ''),
+    ('玉玉', '郁郁', '抑郁'),
+    ('症', '了'),
+)))
+
+
+@sv.on_keyword(*yuyuzheng)
+async def yuyuzheng(bot, ev: CQEvent):
+    imgpath = os.path.join(os.path.expanduser(RES_DIR), 'img', 'kohad', 'yuyuz')
+    yuyuzhengpic = random.choice(os.listdir(imgpath))
+    randomnum = random.random()
+
+    if randomnum < 0.05:
+        try:
+            yuyuzhengpic = R.img(f'kohad/yuyuz/{yuyuzhengpic}').cqcode
+        except Exception as e:
+            hoshino.logger.error(f'读取玉玉梗图时发生错误{type(e)}')
+        await bot.send(ev, yuyuzhengpic)
+    hoshino.logger.info(f'玉玉症随机数为{randomnum}')
