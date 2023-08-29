@@ -117,3 +117,27 @@ async def yuyuzheng(bot, ev: CQEvent):
             hoshino.logger.error(f'读取玉玉梗图时发生错误{type(e)}')
         await bot.send(ev, yuyuzhengpic)
     hoshino.logger.info(f'玉玉症随机数为{randomnum}')
+
+godlist = list(map(''.join, itertools.product(
+    # ('', '舞', '星', '真', '雪'),
+    # ('', '神', '将', '极', '急', '寄'),
+    ('幻空', '薄荷', '纸巾', 'fww', 's', 'S', 'alan', 'Alan', 'ALAN', 'kira', 'Kira', 'kpc', 'KPC', '千叶'),
+    ('', '舞', '星', '真', '雪'),
+    ('神', '叠', '爹', '大佬', 'dalao', '大神', '佬', '将', '极', '急', '寄'),
+    ('', '啊', '水平')
+)))
+
+
+@sv.on_keyword(*godlist)
+async def anti_mairuo(bot, ev: CQEvent):
+    # godpic = "dalao.jpg"
+    godpic = "jiushia.PNG"
+    randomnum = random.random()
+
+    if randomnum < 0.1:
+        try:
+            godpic = R.img(f'kohad/{godpic}').cqcode
+        except Exception as e:
+            hoshino.logger.error(f'读取大神梗图时发生错误{type(e)}')
+        await bot.send(ev, godpic)
+    hoshino.logger.info(f'大神麦若随机数为{randomnum}')
