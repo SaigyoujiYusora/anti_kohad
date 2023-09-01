@@ -1,6 +1,7 @@
 import itertools
 import os
 import random
+import asyncio
 import hoshino
 from hoshino import Service, priv, R
 from hoshino.config import RES_DIR
@@ -154,7 +155,20 @@ async def qrcode(bot, ev: CQEvent):
     qrcodepic = "qrcode.jpg"
     try:
         qrcodepic = R.img(f'kohad/{qrcodepic}').cqcode
+
     except Exception as e:
         hoshino.logger.error(f'读取二维码图片时发生错误{type(e)}')
-    await bot.send(ev, qrcodepic)
+    qcdelete = await bot.send(ev, qrcodepic)
+    notice = await bot.send(ev, f"将在{QRCODE_RECALL_MSG_TIME}s后将撤回消息")
+
+
+
+    await asyncio.sleep(QRCODE_RECALL_MSG_TIME)
+
+    try:
+        await bot.delete_msg(message_id=qcdelete['message_id'])
+        await bot.delete_msg(message_id=notice['message_id'])
+    except:
+        hoshino.logger.error(f'撤回二维码消息时发生错误{type(e)}')
+
 
