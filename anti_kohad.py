@@ -1,5 +1,5 @@
-import os
 import itertools
+import os
 import random
 import hoshino
 from hoshino import Service, priv, R
@@ -141,3 +141,20 @@ async def anti_mairuo(bot, ev: CQEvent):
             hoshino.logger.error(f'读取大神梗图时发生错误{type(e)}')
         await bot.send(ev, godpic)
     hoshino.logger.info(f'大神麦若随机数为{randomnum}')
+
+qrcode = list(map(''.join, itertools.product(
+    ('牛', '投币', '舞萌'),
+    ('', '二维'),
+    ('码', '马'),
+)))
+
+
+@sv.on_keyword(*qrcode)
+async def qrcode(bot, ev: CQEvent):
+    qrcodepic = "qrcode.jpg"
+    try:
+        qrcodepic = R.img(f'kohad/{qrcodepic}').cqcode
+    except Exception as e:
+        hoshino.logger.error(f'读取二维码图片时发生错误{type(e)}')
+    await bot.send(ev, qrcodepic)
+
