@@ -5,6 +5,7 @@ import asyncio
 import hoshino
 from hoshino import Service, priv, R
 from hoshino.config import RES_DIR
+from hoshino.modules.anti_kohad.tools import *
 from hoshino.typing import CQEvent
 
 # sv = Service('anti-KohaD', enable_on_default=False,manage_priv=priv.ADMIN)
@@ -153,13 +154,18 @@ qrcode = list(map(''.join, itertools.product(
 @sv.on_keyword(*qrcode)
 async def qrcode(bot, ev: CQEvent):
     qrcodepic = "qrcode.jpg"
-    try:
-        qrcodepic = R.img(f'kohad/{qrcodepic}').cqcode
+    gid = str(ev.group_id)
+    if gid in repeatQR.Group:
+        await bot.finish(ev, '该群已有未撤回的二维码')
+    else:
+        try:
+            qrcodepic = R.img(f'kohad/{qrcodepic}').cqcode
 
-    except Exception as e:
-        hoshino.logger.error(f'读取二维码图片时发生错误{type(e)}')
-    qcdelete = await bot.send(ev, qrcodepic)
-    notice = await bot.send(ev, f"将在{QRCODE_RECALL_MSG_TIME}s后将撤回消息")
+        except Exception as e:
+            hoshino.logger.error(f'读取二维码图片时发生错误{type(e)}')
+        repeatQR.add(gid)
+        qcdelete = await bot.send(ev, qrcodepic)
+        notice = await bot.send(ev, f"将在{QRCODE_RECALL_MSG_TIME}s后将撤回消息")
 
 
 
@@ -168,7 +174,17 @@ async def qrcode(bot, ev: CQEvent):
     try:
         await bot.delete_msg(message_id=qcdelete['message_id'])
         await bot.delete_msg(message_id=notice['message_id'])
+        await qrcode_tagger(bot, ev)
     except:
         hoshino.logger.error(f'撤回二维码消息时发生错误{type(e)}')
+        await qrcode_tagger(bot, ev)
+
+
+
+async def qrcode_tagger(bot, ev: CQEvent):
+    gid = str(ev.group_id)
+    # await asyncio.sleep(QRCODE_RECALL_MSG_TIME)
+    repeatQR.end(gid)
+
 
 
